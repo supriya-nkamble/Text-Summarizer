@@ -31,5 +31,3 @@ python app.py
 ```
 
 Then open your **localhost** in the browser to access the application.
- **New self-hosted runner**
-3. Choose OS: **Linux**
