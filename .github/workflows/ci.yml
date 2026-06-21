@@ -14,10 +14,10 @@ jobs:
         python-version: ["3.10", "3.11"]
 
     steps:
-      - uses: actions/checkout@v4.3.0
+      - uses: actions/checkout@v6.0.0
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5.4.0
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -39,6 +39,6 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.3.0
+      - uses: actions/checkout@v6.0.0
       - name: Build Docker image
         run: docker build -t text-summarizer:ci .
