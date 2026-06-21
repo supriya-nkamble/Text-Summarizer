@@ -1,12 +1,14 @@
-from text_summarizer.constants import *
-from text_summarizer.utils.common import read_yaml, create_directories
+from pathlib import Path
+
+from text_summarizer.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH
 from text_summarizer.entity import (
     DataIngestionConfig,
-    DataValidationConfig,
     DataTransformationConfig,
-    ModelTrainerConfig,
+    DataValidationConfig,
     ModelEvaluationConfig,
+    ModelTrainerConfig,
 )
+from text_summarizer.utils.common import create_directories, read_yaml
 
 
 class ConfigurationManager:

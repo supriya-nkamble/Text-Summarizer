@@ -1,6 +1,5 @@
-from text_summarizer.config.configuration import ConfigurationManager
 from text_summarizer.components.data_validation import DataValidation
-from text_summarizer.logging import logger
+from text_summarizer.config.configuration import ConfigurationManager
 
 
 class DataValidationTrainingPipeline:

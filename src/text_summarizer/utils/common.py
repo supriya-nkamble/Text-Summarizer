@@ -1,11 +1,12 @@
 import os
-from box.exceptions import BoxValueError
-import yaml
-from text_summarizer.logging import logger
-from ensure import ensure_annotations
-from box import ConfigBox
 from pathlib import Path
-from typing import Any
+
+import yaml
+from box import ConfigBox
+from box.exceptions import BoxValueError
+from ensure import ensure_annotations
+
+from text_summarizer.logging import logger
 
 
 @ensure_annotations

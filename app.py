@@ -1,8 +1,10 @@
 import subprocess
 import sys
+
 from fastapi import FastAPI, HTTPException
-from starlette.responses import RedirectResponse
 from fastapi.responses import Response
+from starlette.responses import RedirectResponse
+
 from text_summarizer.pipeline.prediction import PredictionPipeline
 
 app = FastAPI(title="Text Summarizer", description="Fine-tuned Pegasus summarization API")

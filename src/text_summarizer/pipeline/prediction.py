@@ -1,7 +1,8 @@
-from text_summarizer.config.configuration import ConfigurationManager
-from text_summarizer.logging import logger
 from transformers import AutoTokenizer
 from transformers import pipeline as hf_pipeline
+
+from text_summarizer.config.configuration import ConfigurationManager
+from text_summarizer.logging import logger
 
 _cached_pipeline = None
 
