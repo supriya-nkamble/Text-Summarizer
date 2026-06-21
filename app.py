@@ -1,43 +1,49 @@
-from fastapi import FastAPI
-import uvicorn
+import subprocess
 import sys
-import os
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI, HTTPException
 from starlette.responses import RedirectResponse
 from fastapi.responses import Response
 from text_summarizer.pipeline.prediction import PredictionPipeline
 
+app = FastAPI(title="Text Summarizer", description="Fine-tuned Pegasus summarization API")
 
-text: str = "What is Text Summarization?"
+_MIN_TEXT_LENGTH = 50
+_MAX_TEXT_LENGTH = 10_000
 
-app = FastAPI()
 
-
-@app.get("/", tags=["authentication"])
+@app.get("/", tags=["health"])
 async def index():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/train")
+@app.get("/train", tags=["training"])
 async def training():
-    try:
-        os.system("python main.py")
-        return Response("Training successful !!")
+    result = subprocess.run(
+        [sys.executable, "main.py"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise HTTPException(status_code=500, detail=result.stderr[-2000:] or "Training failed")
+    return Response("Training successful")
 
-    except Exception as e:
-        return Response(f"Error Occurred! {e}")
 
-
-@app.post("/predict")
-async def predict_route(text):
-    try:
-
-        obj = PredictionPipeline()
-        text = obj.predict(text)
-        return text
-    except Exception as e:
-        raise e
+@app.post("/predict", tags=["inference"])
+async def predict_route(text: str):
+    if len(text) < _MIN_TEXT_LENGTH:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Input too short — provide at least {_MIN_TEXT_LENGTH} characters",
+        )
+    if len(text) > _MAX_TEXT_LENGTH:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Input too long — maximum {_MAX_TEXT_LENGTH} characters",
+        )
+    pipeline = PredictionPipeline()
+    return pipeline.predict(text)
 
 
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)

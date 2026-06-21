@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install ruff mypy pytest pytest-mock httpx
+          pip install -e ".[dev]" || pip install -r requirements.txt pytest pytest-mock httpx ruff mypy
+
+      - name: Lint with ruff
+        run: ruff check src/ app.py
+
+      - name: Type check with mypy
+        run: mypy src/ app.py --ignore-missing-imports --no-error-summary
+
+      - name: Run unit tests (no model artifacts required)
+        run: pytest tests/ -m "not integration" -v
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Build Docker image
+        run: docker build -t text-summarizer:ci .
