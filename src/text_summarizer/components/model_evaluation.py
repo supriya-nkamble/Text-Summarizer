@@ -66,7 +66,7 @@ class ModelEvaluation:
                 for s in summaries
             ]
 
-            decoded_summaries = [d.replace("", " ") for d in decoded_summaries]
+            decoded_summaries = [d.replace("<n>", " ") for d in decoded_summaries]
 
             metric.add_batch(predictions=decoded_summaries, references=target_batch)
 
@@ -94,11 +94,11 @@ class ModelEvaluation:
         rouge_metric = load("rouge")
 
         score = self.calculate_metric_on_test_ds(
-            dataset_samsum_pt["test"][0:10],
+            dataset_samsum_pt["test"],
             rouge_metric,
             model_pegasus,
             tokenizer,
-            batch_size=2,
+            batch_size=8,
             column_text="dialogue",
             column_summary="summary",
         )
