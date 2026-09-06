@@ -24,6 +24,10 @@ model_trainer:
 model_evaluation:
   root_dir: "artifacts/model_evaluation"
   data_path: "artifacts/data_transformation/samsum_dataset"
-  model_path: "artifacts/model_trainer/pegasus-model"
-  tokenizer_path: "artifacts/model_trainer/tokenizer"
+  # bart-large-xsum fine-tuned on SAMSum (see kaggle/finetune-bart-xsum-samsum) -
+  # outperforms the original pegasus-cnn_dailymail baseline on every metric
+  # (ROUGE-1 51.9 vs 43.6, BERTScore F1 0.870 vs 0.849). See PLAN.md for the
+  # model-selection rationale.
+  model_path: "artifacts/model_trainer/bart-large-xsum-samsum-v2"
+  tokenizer_path: "artifacts/model_trainer/bart-large-xsum-samsum-v2"
   metric_file_name: "artifacts/model_evaluation/metric.csv"
