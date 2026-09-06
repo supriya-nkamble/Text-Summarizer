@@ -7,7 +7,7 @@ from starlette.responses import RedirectResponse
 
 from text_summarizer.pipeline.prediction import PredictionPipeline
 
-app = FastAPI(title="Text Summarizer", description="Fine-tuned Pegasus summarization API")
+app = FastAPI(title="Text Summarizer", description="Fine-tuned dialogue summarization API")
 
 _MIN_TEXT_LENGTH = 50
 _MAX_TEXT_LENGTH = 10_000
