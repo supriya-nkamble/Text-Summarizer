@@ -22,6 +22,15 @@ Full evaluation methodology, benchmark run, and training run live under
 with no CUDA, impractical for beam-search generation over the full 819-example
 test set). BERTScore uses `distilbert-base-uncased` unrescaled.
 
+**Data quality note**: 41 of the 819 test examples (~5%) have dialogue text
+byte-identical to an entry in the 14,732-example training set — likely
+duplicate conversations in the original SAMSum corpus, not a split bug (there
+is zero `id` overlap between splits). Checked whether this inflates the
+reported numbers (`kaggle/check-leakage/`): those 41 examples do score higher
+(ROUGE-1 56.3 vs 51.7 BERTScore F1 0.883 vs 0.869), but excluding them entirely
+barely moves the aggregate (51.7/27.7/43.1, BERTScore F1 0.869 vs the
+51.9/28.0/43.3, 0.870 reported above) since they're only 5% of the set.
+
 ## Pipeline
 
 Each stage is a config-driven component, orchestrated by `main.py`:
