@@ -13,6 +13,10 @@ from text_summarizer.entity import ModelEvaluationConfig
 from text_summarizer.utils.common import read_yaml
 
 ROUGE_NAMES = ["rouge1", "rouge2", "rougeL", "rougeLsum"]
+# Lighter than BERTScore's implicit lang="en" default (roberta-large, ~1.4GB);
+# distilbert-base-uncased is far cheaper to download/run and is a standard
+# BERTScore choice, which matters on constrained local hardware.
+BERTSCORE_MODEL_TYPE = "distilbert-base-uncased"
 
 
 class ModelEvaluation:
@@ -49,9 +53,9 @@ class ModelEvaluation:
 
             inputs = tokenizer(
                 article_batch,
-                max_length=1024,
+                max_length=256,
                 truncation=True,
-                padding="max_length",
+                padding=True,
                 return_tensors="pt",
             )
 
@@ -109,7 +113,7 @@ class ModelEvaluation:
         )
 
         rouge_score = rouge_metric.compute()
-        bertscore_result = bertscore_metric.compute(lang="en")
+        bertscore_result = bertscore_metric.compute(model_type=BERTSCORE_MODEL_TYPE)
 
         row = {rn: rouge_score[rn] for rn in ROUGE_NAMES}
         row["bertscore_precision"] = sum(bertscore_result["precision"]) / len(
