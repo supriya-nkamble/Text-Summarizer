@@ -177,3 +177,6 @@ artifacts
 
 
 .DS_Store
+
+# Working plan doc - local only, never committed
+PLAN.md
