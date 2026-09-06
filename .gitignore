@@ -175,3 +175,5 @@ cython_debug/
 
 artifacts
 
+
+.DS_Store
