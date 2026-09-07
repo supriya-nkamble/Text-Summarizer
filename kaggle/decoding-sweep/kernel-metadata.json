@@ -1,0 +1,16 @@
+{
+  "id": "supriya76/samsum-decoding-hyperparameter-sweep",
+  "title": "SAMSum decoding hyperparameter sweep",
+  "code_file": "sweep.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "machine_shape": "",
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": ["supriya76/fine-tune-bart-large-xsum-on-samsum"],
+  "model_sources": []
+}
