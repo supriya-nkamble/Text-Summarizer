@@ -1,0 +1,2 @@
+label,model_id,rouge1,rouge2,rougeL,rougeLsum,bertscore_precision,bertscore_recall,bertscore_f1
+"bart-large-xsum-samsum-v2 (ours, fine-tuned)",local,0.5189677686060706,0.28038306386292655,0.43303589822713295,0.4331377634736571,0.8742481356575376,0.866870401834248,0.8697381666582874

@@ -1,9 +1,35 @@
 # Text-Summarizer
 
-A config-driven MLOps pipeline for abstractive dialogue summarization. The point
-of this repo is the **pipeline architecture and engineering practices**, not the
-benchmark score — the checked-in demo model is trained for a single epoch, so its
-ROUGE is not reported.
+A config-driven MLOps pipeline for abstractive dialogue summarization on the
+[SAMSum](https://huggingface.co/datasets/samsum) corpus.
+
+## Model & results
+
+The production model is `facebook/bart-large-xsum` fine-tuned on SAMSum for 3
+epochs. That base checkpoint was chosen deliberately, not by default: SAMSum's
+reference summaries are short and highly abstractive, which matches XSum's
+summary style far better than CNN/DailyMail's longer, more extractive style —
+confirmed empirically below, not just asserted.
+
+| model | base checkpoint's prior fine-tune | rouge1 | rouge2 | rougeL | bertscore-f1 |
+|---|---|---|---|---|---|
+| original baseline | `pegasus-cnn_dailymail` (news, extractive-leaning) | 43.6 | 21.0 | 34.9 | 0.849 |
+| published reference (`lidiya/bart-large-xsum-samsum`) | `bart-large-xsum` (news, abstractive) | 51.6 | 27.5 | 42.8 | 0.869 |
+| **this repo's model** | `bart-large-xsum`, fine-tuned here | **51.9** | **28.0** | **43.3** | **0.870** |
+
+Full evaluation methodology, benchmark run, and training run live under
+`kaggle/` (run on a Kaggle GPU kernel — local hardware here is an 8GB Apple M2
+with no CUDA, impractical for beam-search generation over the full 819-example
+test set). BERTScore uses `distilbert-base-uncased` unrescaled.
+
+**Data quality note**: 41 of the 819 test examples (~5%) have dialogue text
+byte-identical to an entry in the 14,732-example training set — likely
+duplicate conversations in the original SAMSum corpus, not a split bug (there
+is zero `id` overlap between splits). Checked whether this inflates the
+reported numbers (`kaggle/check-leakage/`): those 41 examples do score higher
+(ROUGE-1 56.3 vs 51.7 BERTScore F1 0.883 vs 0.869), but excluding them entirely
+barely moves the aggregate (51.7/27.7/43.1, BERTScore F1 0.869 vs the
+51.9/28.0/43.3, 0.870 reported above) since they're only 5% of the set.
 
 ## Pipeline
 
@@ -13,7 +39,7 @@ Each stage is a config-driven component, orchestrated by `main.py`:
 2. **Data validation** — schema / file checks
 3. **Data transformation** — tokenize with the model tokenizer
 4. **Model training** — fine-tune a Transformer summarizer via the `transformers` Trainer
-5. **Model evaluation** — ROUGE on the held-out split
+5. **Model evaluation** — ROUGE + BERTScore on the held-out split (`scripts/run_evaluation.py` re-runs this stage alone)
 6. **Prediction** — served behind a FastAPI endpoint
 
 Configuration lives in `config/config.yaml` + `params.yaml`; stage inputs/outputs
